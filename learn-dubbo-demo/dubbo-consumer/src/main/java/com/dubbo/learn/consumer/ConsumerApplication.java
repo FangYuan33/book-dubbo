@@ -1,8 +1,11 @@
 package com.dubbo.learn.consumer;
 
 import com.dubbo.learn.DemoService;
+import com.tts.remote.dto.CoordinatePointResultDto;
 import com.tts.remote.dto.IovConfigDto;
 import com.tts.remote.dto.IovSubscribeTaskVehicleDto;
+import com.tts.remote.dto.IovVehicleQueryDto;
+import com.tts.remote.enums.IovTypeEnums;
 import com.tts.remote.service.SystemRemoteService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
@@ -10,6 +13,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 @Service
@@ -33,7 +42,36 @@ public class ConsumerApplication {
 
 //        System.out.println(application.addSubscribeTaskVehicle());
 
-        System.out.println(application.removeSubscribeTaskVehicle());
+//        System.out.println(application.removeSubscribeTaskVehicle());
+
+//        System.out.println(application.queryIovVehicleTrackDirectly().size());
+
+        System.out.println(application.queryIovVehicleLastLocationDirectly().size());
+    }
+
+    public List<CoordinatePointResultDto> queryIovVehicleLastLocationDirectly() {
+        IovVehicleQueryDto queryDto = new IovVehicleQueryDto();
+        queryDto.setIovTypeEnum(IovTypeEnums.G7);
+        queryDto.setVehicleNo("苏H1864P");
+        queryDto.setTimeStart(parseTime("2022-07-13 22:15:01"));
+        queryDto.setTimeEnd(parseTime("2022-07-20 22:14:59"));
+
+        return systemRemoteService.queryIovVehicleLastLocationDirectly(queryDto);
+    }
+
+    public List<CoordinatePointResultDto> queryIovVehicleTrackDirectly() {
+        IovVehicleQueryDto queryDto = new IovVehicleQueryDto();
+        queryDto.setIovTypeEnum(IovTypeEnums.G7);
+        queryDto.setVehicleNo("苏H1864P");
+        queryDto.setTimeStart(parseTime("2022-07-13 22:15:01"));
+        queryDto.setTimeEnd(parseTime("2022-07-20 22:14:59"));
+
+
+        return systemRemoteService.queryIovVehicleTrackDirectly(queryDto);
+    }
+
+    private LocalDateTime parseTime(String time) {
+        return LocalDateTime.parse(time, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     public boolean removeSubscribeTaskVehicle() {
@@ -59,7 +97,7 @@ public class ConsumerApplication {
     }
 
     public boolean doStartSubscribeTask() {
-        return systemRemoteService.startSubscribeTask("001", "G7");
+        return systemRemoteService.startSubscribeTask("002", "G7");
     }
 
     public boolean doInitialIovConfig() {

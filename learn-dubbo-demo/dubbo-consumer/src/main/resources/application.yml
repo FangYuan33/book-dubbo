@@ -9,3 +9,4 @@ dubbo:
     address: zookeeper://101.43.163.223:2181
   consumer:
     check: false
+    timeout: 10000
